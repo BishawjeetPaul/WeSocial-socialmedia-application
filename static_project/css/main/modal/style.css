@@ -1,0 +1,26 @@
+.mymodal {
+	height: 50px !important;
+	top: 25px !important;
+	font-size: 20px !important;
+}
+
+.ml-0 {
+	margin-left: 0px !important;
+}
+
+.mt-5 {
+	margin-top: 5px !important;
+	margin-left: 20px !important;
+	margin-right: 50px !important;
+}
+
+.img-size {
+	width: 200px !important;
+	height: 200px !important;
+	margin-left: 20px !important;
+	margin-right: 50px !important;
+}
+
+.img-10 {
+	margin-top: 15px !important;
+}

@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+
+{% block title %}main page{% endblock title %}
+
+{% block content %}
+
+<div class="ui grid">
+	<div class="thirteen wide column">
+		{% if post_added %}
+	        <div class="ui green message">Post added</div>
+	    {% endif %}
+
+	    {% for obj in qs %}
+
+		<div class="ui fluid card">
+		    <div class="content">
+		        <div class="right floated meta">
+		            <div class="ui grid">
+		                <div class="row">
+		                    {% if request.user == obj.author.user %}
+		                        <a href="{% url 'posts:post-update' obj.pk %}"><button class="ui button bwhite-lg ">Update</button></a>
+		                        <a href="{% url 'posts:post-delete' obj.pk %}"><button class="ui button bwhite-lg ">Delete</button></a>
+		                    {% endif %}
+		                </div>
+		            </div>
+		                    
+		        </div>
+		        <img class="ui avatar image" src={{obj.author.avatar.url}}> 
+		            {{ obj.author.user }} - {{ obj.created|timesince}} ago
+		    </div>
+		    <div class="ui fluid image">
+		        {% if obj.image %}
+		            <img src={{obj.image.url}}>
+		        {% endif %}
+		    </div>
+		    <div class="content">
+	            <p> {{ obj.content }} </p>
+		        <div class="right floated">
+		            <form action="{% url 'posts:like-post-view' %}" method="POST" class='like-form' id='{{obj.id}}'>
+		                {% csrf_token %}
+		                <input type="hidden" name="post_id" value={{obj.id}}>
+
+		                    <button type="submit" class="ui button like-btn{{obj.id}}">
+		                    	<!-- <i class="thumbs up icon"></i>Like -->
+		                    	{% if profile not in obj.liked.all %}
+		                    		Like
+		                    	{% else %}
+		                    		Unlike
+		                    	{% endif %}
+		                    </button>
+		                    <div class="ui grid">
+		                    	<div class="column">
+		                    		<div class="like-count{{obj.id}}"> {{obj.likes_count}} </div>
+		                    	</div>
+		                    	<div class="column">
+		                    		likes
+		                    	</div>
+		                    </div>
+                        	
+		                    <!-- <button type="submit" class="ui bwhite-sm button">
+		                    	<i class="thumbs down icon"></i>Unlike
+		                    </button>
+		                    <span> {{obj.likes_count}} likes</span> -->
+		                    
+		            </form>
+		        </div>
+		        <i class="comment icon"></i>
+		        <span> {{ obj.comments_count }} comments</span>
+		    </div>
+		    <div class="extra content">
+		        <div class="mb-5">
+		                  
+		        </div>
+		        <button class="cmt_btn ui button mb-5">show / hide comments</button>
+		        <div class="comment-box">
+		            {% if obj.comment_set.all %}
+		                {% for c in obj.comment_set.all %}
+		                    
+		                    <div class="ui segment mb-5">
+		                        <img class="ui avatar image" src={{c.user.avatar.url}}>
+		                        <span>{{ c.user }}</span>
+		                        <div class='mt-5'>{{ c.body }}</div>
+		                    </div>
+		                    
+		                {% endfor %}
+		            {% endif %}
+		        </div>
+		  
+		        <form action="" method="POST"class='ui fluid form'>
+		            {% csrf_token %}
+		            <input type="hidden" name="post_id" value={{obj.id}}>
+		            {{ c_form }}
+		            <button type="submit" name="submit_c_form" class="ui primary button mt-5 w-full">Send</button>
+		        </form>
+		    </div>
+		</div>
+
+	        {% endfor %}
+	</div>
+	<div class="three wide column">
+	    <div class="ui segment">
+	        
+	        <button type='button' class="ui positive button" id="my-modal"><i class="plus icon"></i>Add Post</button>
+	        
+	    </div>
+	</div>
+</div>
+
+<!---------- MODAL ------------>
+	<div class="ui small modal post-modal">
+  		<i class="close icon"></i>
+  		<div class="header">
+    		Create new post
+  		</div>
+  		<div class="image content">
+		    <!-- <div class="ui medium image">
+		      	<img src="{{profile.avatar.url}}">
+		    </div> -->
+		    <div class="description">
+		    	<div class="ui header"></div>
+		    	<form action="" method="POST" class="ui form" enctype="multipart/form-data">
+					{% csrf_token %}
+					{{p_form.as_p}}
+						<!-- <div class="action">
+							<div class="ui red deny button"><i class="close icon"></i>
+	      						Close
+	    					</div>
+	    				</div> -->
+						<!-- <button type="submit" name="submit_p_form" class="ui positive button ml-0"><i class="plus icon"></i>
+							Add Post
+						</button> -->
+						
+					    <button type="submit" name="submit_p_form" class="ui positive right labeled icon button">
+					      	<i class="checkmark icon"></i>
+					      	Add Post
+					    </button>
+		      	</form>
+		    </div>
+  		</div>
+	</div>
+	<!--------- //MODAL END// --------->
+
+{% endblock content %}
